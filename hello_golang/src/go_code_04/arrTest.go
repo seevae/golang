@@ -69,6 +69,55 @@ func main(){
 	}
 
 	//bubbleSort(f)
+	fmt.Println()
+	fmt.Println("-----------------------------")
+
+	/**切片 --->slice
+		所谓切片就是一个动态数组,定义的方式与数组也基本类似,只是定义时不需要指定长度
+	*/
+	//当不指定切片长度与容量时
+	var s1 []int  //此时默认切片长度为0,容量为0,直接通过下标是不能赋值的
+	fmt.Println(s1)
+	//s1[0] = 1
+	//s1[1] = 3
+	s1 = append(s1, 1,2,3)  //切片的底层实现实质上是创建了一个新的数组将原先的内容拷贝了过去
+	fmt.Println(s1)
+
+	//指定切片的长度与容量
+	var w2 = []int{1,2,3,4}  //此种方式切片默认就是{}中的内容
+	fmt.Println(w2)
+	//使用make创建切片
+	//var s2 []int = make([]int,3,8)  //简写如下
+	s2:=make([]int,3,8) //创建切片的三个参数 make([]type,len,cap)
+	fmt.Println(s2)
+
+	//可以使用一个数组来给切片赋值
+	arr:=[]int{1,2,3,4}
+	s3 := arr[1:3]  // 冒号":"前后代表所复制数组的起止位置 是一个前开后闭的区间,此数下标[1,3)
+	fmt.Println(s3)
+	//append的俩个用法
+	//1.给切片后添加指定元素
+	s3 = append(s3, 11,22,33)
+	fmt.Println(s3)
+	//2.将一个切片中的所有元素添加到另一个切片后面
+	s3 = append(s3,arr...)
+	fmt.Println(s3)
+	//切片的遍历和数组相同
+
+
+	a:=[10]int{1,2,3,4,5,6,7,8,9,10}
+	slice1 := a[:5]
+	slice2 := a[3:7]
+	fmt.Println(",,",a)
+	fmt.Printf("%p\n",slice1)
+	fmt.Printf("%p\n",&a)
+	fmt.Printf("%p\n",slice2)
+	slice1 = append(slice1, 1,2,3,4)
+	/**注意:如果新加元素长度小于原切片大小,则不不触发扩容而是直接在原数组中添加,所以此处a数组中的内容也会改变*/
+	fmt.Println(slice1)
+	fmt.Println(a)
+	fmt.Printf("%p\n",slice1)
+	fmt.Printf("%p\n",&a)
 }
 
 func bubbleSort(arr [8]int){
