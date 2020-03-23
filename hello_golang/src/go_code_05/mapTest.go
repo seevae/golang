@@ -61,5 +61,16 @@ func main() {
 	//删除数据
 	delete(map1,4) //key值存在直接删除.key值不存在删除失败
 	fmt.Println(map1)
-	
+
+	//map的遍历
+	//for..range遍历: 数组中获取的是下标和对应的值,map中获取的是key和对应的value
+	for key,value:=range map1{
+		fmt.Println(key,value)  //打印结果是无序的.
+	}
+	//有序的遍历map,for循环
+	for i:=1;i<= len(map1);i++{
+		fmt.Println(i,map1[i])
+	}
+
+
 }
