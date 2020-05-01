@@ -16,9 +16,112 @@ type Person struct {
 	address string
 }
 
+type Student2 struct{
+	name string
+	age int
+	book *Book
+}
+
+type Student struct {
+	name string
+	age int
+	book Book
+}
+
+type Book struct {
+	name string
+	price string
+}
+
+type Worker struct{
+	string  //匿名字段,默认使用数据类型作为名字,由于是使用类型名字区分字段名称,所以类型不能重复
+	//string  //再来个string 就报错了
+	int
+}
+
 func main(){
-	structInit() //结构体的定义
-	structPointer() //结构体指针
+		nestStruct() //结构体嵌套
+	/*
+		nonameStruct() //匿名结构体 && 结构体中的匿名字段
+		structPointer() //结构体指针
+		structInit() //结构体的定义
+	*/
+}
+
+func nestStruct() {
+	student1 := Student{
+		name: "小花",
+		age:  18,
+		book: Book{
+			name:"十万个为什么",
+			price:"35.5",
+		},
+	}
+	fmt.Println(student1)
+	student1.book.name = "水浒传"
+	fmt.Println(student1)
+
+	fmt.Println("---------------------------")
+
+	book2 := Book{"哈利波特","50"}
+	student2 := Student{
+		name: "小飞侠",
+		age:  20,
+		book: book2,
+	}
+	fmt.Println(student2)
+	/**
+		结构体都是值传递, 在定义 book: book2时实际上是复制了一个副本
+		所以在后面改变了student2.book.book2 的值时, student2中book的副本发生了变化但是book本身没有改变
+		注意: 一般情况下结构体嵌套直接传地址, 这样可以直接改变结构体中字段的值
+	*/
+	student2.book.name = "名侦探柯南"
+	fmt.Println(student2)
+	fmt.Println(book2)
+
+	fmt.Println("========================")
+	book1:=Book{
+		name: "解忧杂货铺",
+		price: "35.9",
+	}
+	stu :=Student2{
+		name: "小飞哥",
+		age:  19,
+		book: &book1,
+	}
+	fmt.Printf("学生: %s , 年龄: %d, 书籍名称: %s, 书籍价钱: %s\n",stu.name,stu.age,stu.book.name,stu.book.price)
+	stu.book.name = "可可西里的美丽传说"
+	fmt.Printf("学生: %s , 年龄: %d, 书籍名称: %s, 书籍价钱: %s\n",stu.name,stu.age,stu.book.name,stu.book.price)
+	fmt.Printf("book1.name = %s, book1.price = %s\n",book1.name,book1.price)
+}
+
+
+func nonameStruct(){
+	/*
+		匿名结构体: 没有名字的结构体,在创建匿名结构体时,同时创建对象
+		匿名字段: 一个结构体的字段没有字段名
+	*/
+	s1 := Student{age:18,name:"Lily"}
+	fmt.Println(s1)
+
+	//匿名函数
+	func (){
+		fmt.Println("我是匿名函数")
+	}()  //()代表调用
+
+	//匿名结构体
+	s2 := struct {
+		name string
+		address string
+	}{
+		name:"李四",
+		address:"新疆",
+	}
+	fmt.Println(s2.name,s2.address)
+
+	//结构体匿名字段
+	w1:=Worker{"小明",18}
+	fmt.Println(w1.string,w1.int)
 }
 
 func structPointer() {
