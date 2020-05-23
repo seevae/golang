@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 /*
 Go语言中的接口:
@@ -14,8 +17,45 @@ func main(){
 	test1() //接口的初步认识
 	test2() //空接口
 	test3() //接口的嵌套
+	test4() //接口断言
 }
 
+func test4() {
+	var t1 Triangle = Triangle{
+		a: 3,
+		b: 4,
+		c: 5,
+	}
+	var c1 Circle = Circle{radius:4}
+
+	var s1 Shape
+	s1 = t1
+	fmt.Println(s1.peri())
+	fmt.Println(s1.area())
+
+	var s2 Shape
+	s2 = c1
+	fmt.Println(s2.peri())
+	fmt.Println(s2.area())
+
+	testShape(s1)
+	testShape(s2)
+	testShape(t1)
+
+	getType(s2)
+	getType(s1)
+}
+
+func getType(s Shape){
+	if ins,ok := s.(Triangle);ok{ //断言 带上返回值ok . 防止发生panic
+		fmt.Println("是三角形,三边是:",ins.a,ins.b,ins.c)
+	}else{
+		fmt.Println("不是三角形")
+	}
+}
+func testShape(s Shape){
+	fmt.Printf("周长:%.2f,面积:%.2f\n",s.peri(),s.area())
+}
 func test3() {
 	//如果想要实现接口D,则也要实现接口B,C因为B,C在D中嵌套着
 	c := Cat{}
@@ -130,3 +170,31 @@ func (c Cat) testD(){
 	fmt.Println("testD()....")
 }
 
+
+//-----------接口断言----------------
+type Shape interface {
+	peri() float64 //图形周长
+	area() float64 //图形面积
+}
+//定义实现类:三角形
+type Triangle struct {
+	a,b,c float64
+}
+func (t Triangle) peri() float64{
+	return t.a+t.b+t.c
+}
+func (t Triangle) area() float64{
+	p := t.peri() / 2
+	s := math.Sqrt(p*(p-t.a)*(p-t.b)*(p-t.c))
+	return s
+}
+//定义实现类:圆形
+type Circle struct {
+	radius float64
+}
+func (c Circle) peri()float64{
+	return c.radius *2 * math.Pi
+}
+func (c Circle) area() float64{
+	return math.Pow(c.radius,2)*math.Pi
+}
