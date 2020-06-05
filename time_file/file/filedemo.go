@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -11,11 +13,73 @@ func main(){
 	//test1() //fileinfo文件操作
 	//test2() //创建目录(路径)操作 filePath
 	//test3() //创建文件操作
-	test4() //io操作
+	//test4() //io操作 读
+	test5() //io操作 写
+}
+
+func test5() {
+	//1.打开文件
+	file,err := os.OpenFile("E:/test/test1/newfile2.txt",os.O_RDWR,os.ModePerm) //需要进行写操作,所以要使用该方法
+	//3.关闭连接
+	defer file.Close()
+	//2.写出数据
+	if err != nil{
+		fmt.Println(err)
+	}
+	arrWrite := []byte{97,98,99,100}
+	n,err2 := file.Write(arrWrite)
+	if err != nil{
+		fmt.Println(err2)
+	}
+	fmt.Println(n)
+	//以字符串的形式直接输出
+	n1,err3 := file.WriteString("你好啊可达鸭")
+	if err3 != nil{
+		fmt.Println(err3)
+	}
+	fmt.Println(n1)
+}
+
+func errorCheck(err error){
+	if err != nil{
+		log.Fatal(err)
+	}
 }
 
 func test4() {
+	//1.打开文件
+	file,err := os.Open("E:/test/test1/newFile.txt")
+	//3.关闭连接
+	defer file.Close()  //习惯上先写关闭连接使用defer关键字最后执行
+	//2.读取数据
+	if err != nil{
+		fmt.Println(err)
+		return
+	}
+	readArr := make([]byte,4,4)
+	//n,err2 := file.Read(readArr)  //n返回值为读取到的长度,单位字节
+	//if err2 != nil{
+	//	fmt.Println(err2)
+	//}
+	//fmt.Println(n)
+	//fmt.Println(string(readArr)) //没有读完
+	////第二次读取
+	//n1,err3 := file.Read(readArr)
+	//fmt.Println(err3)
+	//fmt.Println(n1)
+	//fmt.Println(string(readArr))
+	//...
 
+	//正确读取的做法
+	for {
+		n,err := file.Read(readArr)
+		if n==0 || err == io.EOF {
+			fmt.Println()
+			fmt.Println("读操作已完成")
+			break
+		}
+		fmt.Print(string(readArr[:n]))
+	}
 }
 
 func test3() {
