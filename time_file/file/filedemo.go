@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -14,7 +15,83 @@ func main(){
 	//test2() //创建目录(路径)操作 filePath
 	//test3() //创建文件操作
 	//test4() //io操作 读
-	test5() //io操作 写
+	//test5() //io操作 写
+
+	//拷贝文件
+	srcFile := "E:/test/test1/newfile.txt"
+	destFile := "E:/test/test1/newfile4.txt"
+	//srcFile := "E:/test/test1/pic1.jpg"
+	//destFile2 := "E:/test/test3/pic2.jpg"
+	copyFile3(srcFile,destFile)
+}
+
+//使用ioutil包中的方法
+func  copyFile3(srcFile,destFile string)(int,error){
+	arr,error := ioutil.ReadFile(srcFile)
+	if error != nil{
+		fmt.Println("出现错误:",error)
+		return 0,nil
+	}
+	error = ioutil.WriteFile(destFile,arr,os.ModePerm)
+	if error != nil{
+		return 0,nil
+	}
+	fmt.Println("拷贝完成")
+	return len(arr),nil
+}
+
+//使用io包中的Copy方法(推荐)
+func copyFile2(srcFile,destFile string)(int64,error){
+	srcF,error := os.Open(srcFile)
+	if error != nil{
+		fmt.Println("发生错误----1")
+		return 0,error
+	}
+	destF,error := os.OpenFile(destFile,os.O_CREATE|os.O_RDWR,os.ModePerm)
+	if error != nil{
+		fmt.Println("发生错误----2")
+		return 0,error
+	}
+	defer srcF.Close()
+	defer destF.Close()
+	return io.Copy(destF,srcF)
+}
+
+//使用file对象的read,write进行读写
+func copyFile(srcFile,destFile string)(int,error) {
+	//1.打开文件
+	src,error := os.Open(srcFile)
+	if error != nil{
+		fmt.Println("有错误,返回-->1")
+		return 0,error
+	}
+	dest,error := os.OpenFile(destFile,os.O_RDWR|os.O_CREATE,os.ModePerm)  //注意第二个参数指定系统操作文件的权限,此处为可读可写可创建
+	if error != nil{
+		fmt.Println("err:",error)
+		fmt.Println("有错误,返回-->2")
+		return 0,error
+	}
+	//3.关闭连接
+	defer src.Close()
+	defer dest.Close()
+	//2.读写
+	arr := make([]byte,1024,1024)
+	total := 0
+	n := -1
+	for{
+		n,error = src.Read(arr)
+		if n==0 || error == io.EOF{
+			fmt.Println("拷贝完毕,准备粘贴...")
+			break
+		}else if error != nil{
+			fmt.Println("出现错误")
+			return total,error
+		}
+		total = total+n
+		dest.Write(arr)
+	}
+	fmt.Println("拷贝完成")
+	return total,nil
 }
 
 func test5() {
@@ -38,12 +115,6 @@ func test5() {
 		fmt.Println(err3)
 	}
 	fmt.Println(n1)
-}
-
-func errorCheck(err error){
-	if err != nil{
-		log.Fatal(err)
-	}
 }
 
 func test4() {
@@ -195,3 +266,8 @@ func test1() {
 	}
 }
 
+func errorCheck(err error){
+	if err != nil{
+		log.Fatal(err)
+	}
+}
