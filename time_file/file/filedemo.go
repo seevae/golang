@@ -18,11 +18,45 @@ func main(){
 	//test5() //io操作 写
 
 	//拷贝文件
-	srcFile := "E:/test/test1/newfile.txt"
-	destFile := "E:/test/test1/newfile4.txt"
+	//srcFile := "E:/test/test1/newfile.txt"
+	//destFile := "E:/test/test1/newfile4.txt"
 	//srcFile := "E:/test/test1/pic1.jpg"
 	//destFile2 := "E:/test/test3/pic2.jpg"
-	copyFile3(srcFile,destFile)
+	//copyFile3(srcFile,destFile)
+
+	//seek方法: 设置文件读取的偏移量
+	test6()
+	
+}
+
+func test6() {
+	srcFile := "E:/test/test1/newfile.txt"
+	file,err := os.OpenFile(srcFile,os.O_RDWR,os.ModePerm)
+	if err != nil{
+		fmt.Println("error",err)
+	}
+	bs := []byte{0}
+	file.Read(bs)
+	fmt.Println(string(bs))
+	file.Seek(6,io.SeekStart)  //第一个参数设置偏移量,第二个参数表示如何设置
+	/*
+	const (
+		SeekStart   = 0 // 相对于文件开始
+		SeekCurrent = 1 // 相对于当前位置
+		SeekEnd     = 2 // 相对于文件结束
+	)
+	 */
+	file.Read(bs)
+	fmt.Println(string(bs))
+
+	file.Seek(2,io.SeekCurrent)
+	file.Read(bs)
+	fmt.Println(string(bs))
+
+	//写操作
+	file.Seek(3,io.SeekStart) //从文件开始3字节后开始写入
+	file.WriteString("AAAA")
+
 }
 
 //使用ioutil包中的方法
