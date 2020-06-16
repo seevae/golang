@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -78,4 +79,26 @@ func sendData2(ch chan int){
 		ch<-i
 	}
 	close(ch)
+}
+
+//带缓冲区的通道
+func sendData3(ch chan string){
+	for i:=0;i<10;i++{
+		ch <- "数据"+strconv.Itoa(i)
+		fmt.Printf("子goroutine写入第%d个数据\n",i)
+	}
+	close(ch)
+}
+func test5(){
+	ch := make(chan string,5)
+	go sendData3(ch)
+	for{
+		data,ok := <-ch
+		if !ok{
+			fmt.Println("通道内已读完")
+			break
+		}
+		fmt.Println("\t主goroutine从通道中读到的内容:",data)
+	}
+	fmt.Println("main...over.")
 }
